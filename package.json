@@ -1,7 +1,7 @@
 {
-  "name": "express-mesto-gha",
+  "name": "movies-explorer-api",
   "version": "1.0.0",
-  "description": "Сервер для сервиса Mesto",
+  "description": "Бэкэнд сайта по подбору фильмов",
   "main": "app.js",
   "scripts": {
     "lint": "npx eslint .",
