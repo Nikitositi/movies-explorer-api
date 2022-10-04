@@ -1,6 +1,8 @@
 const whiteList = [
-  // 'http://nikitositi.nomoredomains.sbs',
-  // 'https://nikitositi.nomoredomains.sbs',
+  'http://movies-nikitositi.nomoredomains.icu',
+  'https://movies-nikitositi.nomoredomains.icu',
+  'http://api.movies-nikitositi.nomoredomains.icu',
+  'https://api.movies-nikitositi.nomoredomains.icu',
   'http://localhost:3000',
   'https://localhost:3000',
 ];
