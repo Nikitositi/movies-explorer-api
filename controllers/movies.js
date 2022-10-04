@@ -36,7 +36,9 @@ module.exports.createMovie = (req, res, next) => {
     .then((movie) => res.send({ data: movie }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError('Переданы некорректные данные при создании фильма');
+        throw new BadRequestError(
+          'Переданы некорректные данные при создании фильма',
+        );
       }
     })
     .catch(next);
@@ -45,7 +47,13 @@ module.exports.createMovie = (req, res, next) => {
 module.exports.getMovies = (req, res, next) => {
   const owner = req.user._id;
   Movie.find({ owner })
-    .then((movies) => res.send(movies))
+    .then((movies) => {
+      if (movies.length === 0) {
+        res.send({ message: 'У вас нет сохраненных фильмов' });
+      } else {
+        res.send(movies);
+      }
+    })
     .catch(next);
 };
 
