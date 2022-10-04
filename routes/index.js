@@ -2,7 +2,7 @@ const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const validator = require('validator');
 
-const { createUser, login } = require('../controllers/users');
+const { createUser, login, logout } = require('../controllers/users');
 const usersRouter = require('./users');
 const moviesRouter = require('./movies');
 const auth = require('../middlewares/auth');
@@ -26,6 +26,7 @@ router.post('/signin', celebrate({
     password: Joi.string().required(),
   }),
 }), login);
+router.use('/signout', logout);
 
 router.use(auth);
 

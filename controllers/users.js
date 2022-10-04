@@ -108,8 +108,16 @@ module.exports.login = (req, res, next) => {
         })
         .send({ token });
     })
-    // .catch(() => {
-    //   throw new AuthError('Неверная почта или пароль');
-    // })
     .catch(next);
+};
+
+module.exports.logout = (req, res, next) => {
+  res
+    .clearCookie('jwt', {
+      sameSite: 'none',
+      secure: true,
+    })
+    .send({ message: 'Вы успешно разлогинились' })
+    .end();
+  next();
 };
