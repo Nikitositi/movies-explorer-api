@@ -10,6 +10,7 @@ const router = require('./routes/index');
 const errorHandler = require('./middlewares/errorHandler');
 const corsHandler = require('./middlewares/corsHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const limiter = require('./middlewares/limiter');
 
 const { PORT = 3000, MONGO_ADDRESS = 'mongodb://localhost:27017/moviesdb' } = process.env;
 
@@ -26,6 +27,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(requestLogger);
+
+app.use(limiter);
 
 app.use(corsHandler);
 
