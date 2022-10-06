@@ -9,13 +9,17 @@ const UniqueValueError = require('../errors/UniqueValueError');
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 
+const {
+  NOT_FOUND_USER, UNIQUE_EMAIL, NOT_VALID_ID, INCORRET_DATA,
+} = require('../utils/constants');
+
 module.exports.getCurrentUser = (req, res, next) => {
   const userId = req.user._id;
 
   return User.findById(userId)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь c таким id не найден');
+        throw new NotFoundError(NOT_FOUND_USER);
       } else {
         res.send({ user });
       }
@@ -35,7 +39,7 @@ module.exports.updateUserProfile = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь c таким id не найден');
+        throw new NotFoundError(NOT_FOUND_USER);
       } else {
         res.send(user);
       }
@@ -43,14 +47,14 @@ module.exports.updateUserProfile = (req, res, next) => {
     .catch((err) => {
       if (err.code === 11000) {
         return next(
-          new UniqueValueError('Пользователь с таким email уже зарегистрирован'),
+          new UniqueValueError(UNIQUE_EMAIL),
         );
       }
       if (err.name === 'ValidationError') {
-        return next(new BadRequestError('Переданы некорректные данные'));
+        return next(new BadRequestError(INCORRET_DATA));
       }
       if (err.name === 'CastError') {
-        return next(new BadRequestError('Некорректный id'));
+        return next(new BadRequestError(NOT_VALID_ID));
       }
       return next(err);
     });
@@ -77,14 +81,12 @@ module.exports.createUser = (req, res, next) => {
         .catch((err) => {
           if (err.code === 11000) {
             return next(
-              new UniqueValueError('Пользователь с таким email уже существует'),
+              new UniqueValueError(UNIQUE_EMAIL),
             );
           }
           if (err.name === 'ValidationError' || err.name === 'CastError') {
             return next(
-              new BadRequestError(
-                'Переданы некорректные данные при создании пользователя',
-              ),
+              new BadRequestError(INCORRET_DATA),
             );
           }
           return next(err);
@@ -105,7 +107,7 @@ module.exports.login = (req, res, next) => {
           maxAge: 3600000 * 24 * 7,
           httpOnly: true,
           sameSite: 'none',
-          // secure: true,
+          secure: true,
         })
         .send({ token });
     })

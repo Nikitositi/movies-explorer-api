@@ -7,6 +7,7 @@ const usersRouter = require('./users');
 const moviesRouter = require('./movies');
 const auth = require('../middlewares/auth');
 const NotFoundError = require('../errors/NotFoundError');
+const { INCORRET_EMAIL, NOT_FOUND } = require('../utils/constants');
 
 router.post('/signup', celebrate({
   body: Joi.object().keys({
@@ -15,7 +16,7 @@ router.post('/signup', celebrate({
       if (validator.isEmail(value)) {
         return value;
       }
-      return helpers.message('Введенный email некорректен');
+      return helpers.message(INCORRET_EMAIL);
     }),
     password: Joi.string().required(),
   }),
@@ -33,7 +34,7 @@ router.use(auth);
 router.use(usersRouter);
 router.use(moviesRouter);
 router.use((req, res, next) => {
-  next(new NotFoundError('Запрашиваемый ресурс не найден'));
+  next(new NotFoundError(NOT_FOUND));
 });
 
 module.exports = router;
