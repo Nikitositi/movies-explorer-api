@@ -2,6 +2,7 @@ const Movie = require('../models/movie');
 
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
+const NoRightsError = require('../errors/NoRightsError');
 
 module.exports.createMovie = (req, res, next) => {
   const {
@@ -48,11 +49,7 @@ module.exports.getMovies = (req, res, next) => {
   const owner = req.user._id;
   Movie.find({ owner })
     .then((movies) => {
-      if (movies.length === 0) {
-        res.send({ message: 'У вас нет сохраненных фильмов' });
-      } else {
-        res.send(movies);
-      }
+      res.send(movies);
     })
     .catch(next);
 };
@@ -60,8 +57,10 @@ module.exports.getMovies = (req, res, next) => {
 module.exports.deleteMovie = (req, res, next) => {
   Movie.findById(req.params.movieId)
     .then((movie) => {
-      if (!movie || movie.owner.toString() !== req.user._id) {
+      if (!movie) {
         throw new NotFoundError('Фильм не найден');
+      } else if (movie.owner.toString() !== req.user._id) {
+        throw new NoRightsError('Нет прав доступа');
       }
       Movie.findByIdAndDelete(req.params.movieId)
         .then(() => {
@@ -72,8 +71,8 @@ module.exports.deleteMovie = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         throw new BadRequestError('Переданы некорректные данные');
+      } else {
+        next(err);
       }
-      throw err;
-    })
-    .catch(next);
+    });
 };

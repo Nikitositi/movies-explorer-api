@@ -31,7 +31,7 @@ moviesRouter.post('/movies', celebrate({
       }
       return helpers.message('Введена некорректная ссылка');
     }),
-    movieId: Joi.string().required(),
+    movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
   }),
