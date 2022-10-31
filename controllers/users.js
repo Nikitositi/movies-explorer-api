@@ -24,7 +24,7 @@ module.exports.getCurrentUser = (req, res, next) => {
       if (!user) {
         throw new NotFoundError(NOT_FOUND_USER);
       } else {
-        res.send({ user });
+        res.send(user);
       }
     })
     .catch(next);
