@@ -3,9 +3,7 @@ const Movie = require('../models/movie');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 const NoRightsError = require('../errors/NoRightsError');
-const {
-  INCORRET_DATA, NO_RIGHTS, NOT_FOUND,
-} = require('../utils/constants');
+const { INCORRET_DATA, NO_RIGHTS, NOT_FOUND } = require('../utils/constants');
 
 module.exports.createMovie = (req, res, next) => {
   const {
@@ -71,7 +69,7 @@ module.exports.deleteMovie = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError(INCORRET_DATA);
+        next(new BadRequestError(INCORRET_DATA));
       } else {
         next(err);
       }

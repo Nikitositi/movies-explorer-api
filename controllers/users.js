@@ -10,7 +10,10 @@ const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 
 const {
-  NOT_FOUND_USER, UNIQUE_EMAIL, NOT_VALID_ID, INCORRET_DATA,
+  NOT_FOUND_USER,
+  UNIQUE_EMAIL,
+  NOT_VALID_ID,
+  INCORRET_DATA,
 } = require('../utils/constants');
 
 module.exports.getCurrentUser = (req, res, next) => {
@@ -35,7 +38,7 @@ module.exports.updateUserProfile = (req, res, next) => {
     {
       runValidators: true,
       new: true,
-    },
+    }
   )
     .then((user) => {
       if (!user) {
@@ -46,9 +49,7 @@ module.exports.updateUserProfile = (req, res, next) => {
     })
     .catch((err) => {
       if (err.code === 11000) {
-        return next(
-          new UniqueValueError(UNIQUE_EMAIL),
-        );
+        return next(new UniqueValueError(UNIQUE_EMAIL));
       }
       if (err.name === 'ValidationError') {
         return next(new BadRequestError(INCORRET_DATA));
@@ -61,9 +62,7 @@ module.exports.updateUserProfile = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  const {
-    name, email, password,
-  } = req.body;
+  const { name, email, password } = req.body;
 
   bcrypt
     .hash(password, 10)
@@ -80,14 +79,10 @@ module.exports.createUser = (req, res, next) => {
         })
         .catch((err) => {
           if (err.code === 11000) {
-            return next(
-              new UniqueValueError(UNIQUE_EMAIL),
-            );
+            return next(new UniqueValueError(UNIQUE_EMAIL));
           }
           if (err.name === 'ValidationError' || err.name === 'CastError') {
-            return next(
-              new BadRequestError(INCORRET_DATA),
-            );
+            return next(new BadRequestError(INCORRET_DATA));
           }
           return next(err);
         });
@@ -99,9 +94,13 @@ module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', {
-        expiresIn: '7d',
-      });
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+        {
+          expiresIn: '7d',
+        }
+      );
       res
         .cookie('jwt', token, {
           maxAge: 3600000 * 24 * 7,
